@@ -9,6 +9,7 @@
 - [Error Handling](#error-handling)
 - [Notes / Assumptions](#notes--assumptions)
 - [Enhancements / Improvements](#enhancements--improvements)
+- [Setup and Running with Docker](#setup-and-running-with-docker)
   
 ## Overview
 
@@ -227,6 +228,7 @@ Common error codes include:
 - `CreatedAt` and `UpdatedAt` timestamps are introduced for easy auditing of recent changes.
 - All IDs are assumed to have UUID, like the user-id.
 - Error Codes are provided for easy debugging for clients.
+- Enabled batch insert and update, and assume 30 is enough since instructions and ingredients are less likely to have more. This based on my own knowledge though.
 
 ## Enhancements / Improvements
 - The recipe is assumed to be only accessible for the user or owner on a single device, no locking is in place for concurrent updates for now.
@@ -235,3 +237,70 @@ Common error codes include:
 - The include and exclude ingredient filter is not properly aligned with the pagination if both are used.
   - Improve query, rather than the derived query, maybe use JPQL to properly fetch both include and exclude in one query.
 - Add database migration like Liquibase or Flyway for schema changes and history.
+
+## Setup and Running with Docker
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Java 17+ and Maven (or use the included Maven wrapper)
+- Make (optional but recommended for build steps)
+
+### Step 1: Prepare Environment File
+Copy the example environment file:
+
+```bash
+make .env
+# or manually:
+cp .env.example .env
+```
+
+Edit `.env` if needed (defaults match the compose setup).
+
+### Step 2: Build the Application Docker Image
+Use the Makefile to compile and build the Docker image via Jib:
+
+```bash
+make build
+```
+
+This runs `./mvnw compile jib:dockerBuild -DskipTests=true`, producing the `recipe-app:latest` image.
+
+(Alternatively, you can run tests first with `make test`.)
+
+### Step 3: Spin Up Containers with Docker Compose
+From the project root, start the services (app + PostgreSQL) using the provided compose file:
+
+```bash
+docker compose -f docker/docker-compose.yml up -d
+```
+
+This will:
+- Start PostgreSQL on host port 5435 (container 5432)
+- Start the recipe-app on port 8080
+- Use the pre-built `recipe-app:latest` image
+- Initialize the DB with the role from `docker/psql/init.sql`
+- Set up a dedicated network `recipe-app-network`
+
+Verify with:
+```bash
+docker compose -f docker/docker-compose.yml ps
+docker logs -f recipe-app
+```
+
+The app healthcheck ensures it's ready after DB is up.
+
+### Stopping
+```bash
+docker compose -f docker/docker-compose.yml down
+```
+
+### Additional Makefile Targets
+- `make start`: Builds image and runs container directly (uses docker run, for non-compose use)
+- `make stop`: Stops the app container
+- `make restart`: Stops and restarts
+- `make logs`: Follows app logs
+
+### Accessing the API
+Once running, the API is available at `http://localhost:8080/api/v1/manage/recipes`
+
+Use tools like curl, Postman, or HTTP clients, providing required headers (`user-id`, `request-id` for mutations).
