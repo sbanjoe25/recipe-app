@@ -229,6 +229,7 @@ Common error codes include:
 - All IDs are assumed to have UUID, like the user-id.
 - Error Codes are provided for easy debugging for clients.
 - Enabled batch insert and update, and assume 30 is enough since instructions and ingredients are less likely to have more. This based on my own knowledge though.
+- Servings is assumed to display how many persons can be served, not really sure on how I should represent this, I was thinking of adding a volume to be more specific.
 
 ## Enhancements / Improvements
 - The recipe is assumed to be only accessible for the user or owner on a single device, no locking is in place for concurrent updates for now.
