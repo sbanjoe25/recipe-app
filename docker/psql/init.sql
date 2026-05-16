@@ -1,0 +1,1 @@
+CREATE ROLE recipe_apps LOGIN SUPERUSER PASSWORD 'recipe';

@@ -1,0 +1,42 @@
+services:
+  app:
+    container_name: recipe-app
+    image: recipe-app:latest
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: 'jdbc:postgresql://recipe-app-postgres:5432/recipe_db?currentSchema=recipe_user'
+      DB_USER: 'recipe_apps'
+      DB_PASS: 'recipe'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: recipe-app-postgres
+    volumes:
+       - ./psql/init.sql:/docker-entrypoint-initdb.d/init.sql
+       - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=recipe_db
+      - POSTGRES_USER=recipe_apps
+      - POSTGRES_PASSWORD=recipe
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recipe_apps -d recipe_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+networks:
+  default:
+    name: recipe-app-network
+
+volumes:
+  postgres-data:

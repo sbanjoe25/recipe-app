@@ -13,6 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
+		<platform.architecture>arm64</platform.architecture>
 		<java.version>17</java.version>
 		<jacoco.version>0.8.11</jacoco.version>
 		<jib.version>3.4.4</jib.version>
