@@ -1,5 +1,15 @@
 # Recipe Management API
 
+## Table of Contents
+- [Overview](#overview)
+- [Base Url](#base-url)
+- [Common Headers](#common-headers)
+- [Data Models](#data-models)
+- [Endpoints](#endpoints)
+- [Error Handling](#error-handling)
+- [Notes / Assumptions](#notes--assumptions)
+- [Enhancements / Improvements](#enhancements--improvements)
+  
 ## Overview
 
 This API provides endpoints to manage recipes, including creation, retrieval, updating, deletion, and searching with various filters. All endpoints are under the base path `/api/v1/manage/recipes`.
