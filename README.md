@@ -66,7 +66,7 @@ All endpoints require the following headers:
   "servings": "integer",
   "ingredients": [
     {
-      "id": "hashId,
+      "id": "hashId",
       "name": "string",
       "quantity": "BigDecimal",
       "unit": "string"
@@ -101,9 +101,7 @@ Creates a new recipe for the specified user. Supports idempotency via `request-i
 
 **Success Response:** `201 Created`
 
-```json
-RecipeResponse
-```
+[RecipeResponse](#recipe-response)
 
 Includes `request-id` in response headers.
 
@@ -169,6 +167,8 @@ Retrieves a specific recipe by its ID, scoped to the user.
 **PUT** `/api/v1/manage/recipes/{recipeId}`
 
 Updates an existing recipe. Supports idempotency via `request-id`.
+For existing ingredient and instruction, include id in order to update.
+Without an id, it will assume it's a new record.
 
 **Headers:**
 - `request-id`: UUID (required)
